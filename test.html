@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang='zh'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>test</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div id="root"></div>
+    <div id="root1"></div>
+
+    <script type='text/javascript' src='./js/react.development.js'></script>
+
+    <script type='text/javascript' src='./js/react-dom.development.js'></script>
+
+    <script type='text/javascript' src='./js/babel.min.js'></script>
+
+    <script type='text/javascript' src='./js/prop-types.js'></script>
+
+    <script type='text/babel'>
+
+        class User {
+            constructor(name, age, sex, phone) {
+                this.name = name
+                this.age = age
+                this.sex = sex
+                this.phone = phone
+            }
+        }
+
+        //父组件
+        class App extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <Add />
+                        <List />
+                    </div>
+                )
+            }
+        }
+
+        //子组件-添加板块
+        class Add extends React.Component {
+            constructor(props) {
+                super(props)
+                this.bRef = React.createRef()
+            }
+
+            createUser = ()=> {
+                const {name, age, sex, phone} = this.refs
+                const user = new User(name.value, age.value, sex.value, phone.value)
+                console.log(this.bRef.current.state.users)
+                if (this.bRef.current) {
+                    this.bRef.current.addUser(user)
+                }
+            }
+
+            render() {
+                return (
+                    <div className="inputbox">
+                        <span className="box-text">慕课信息录入系统(React版)</span><br />
+
+                        <span>姓名:</span>
+                        <input ref="name" type="text" placeholder="请输入姓名" defaultValue="张三"/><br />
+
+                        <span>年龄:</span>
+                        <input ref="age" type="number" placeholder="请输入年龄" defaultValue={18}/><br />
+
+                        <span>性别：</span>
+                        <select ref="sex">
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                            <option value="其他">其他</option>
+                        </select><br />
+                        
+                        <span>手机:</span>
+                        <input ref="phone" type="text" placeholder="请输入手机号码" defaultValue="123456789"/><br />
+
+                        <button onClick={this.createUser}>创建新用户:</button>
+                        <List ref={this.bRef} />
+                    </div>
+                )
+            }
+        }
+
+        //子组件-展示版块
+        class List extends React.Component {
+
+            state = {users:[]}
+
+            addUser = (user) => {
+                this.setState(prevState => ({
+                    users: [...prevState.users, user]
+                }))
+            }
+
+            render() {
+                return (
+                    <div>
+                        <ul>
+                            {
+                                this.state.users.map((user, index)=>{
+                                    <li key={index}>{user}</li>
+                                })
+                            }
+                        </ul>
+                    </div>
+                )
+            }
+        }
+
+        //渲染
+        ReactDOM.render(<Add />, document.getElementById('root'))
+    </script>
+</body>
